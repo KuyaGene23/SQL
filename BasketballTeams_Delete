@@ -1,0 +1,29 @@
+ALTER   PROC [dbo].[BasketballTeams_Delete]
+				@Id int 
+
+AS
+
+/* ------- TEST CODE ------
+
+
+			DECLARE @Id int = 10
+
+
+			EXECUTE dbo.People_Delete @Id
+
+			SELECT * 
+			FROM dbo.People
+			WHERE Id = @Id;
+
+
+*/ ------ END TEST CODE ------
+
+
+
+
+BEGIN
+
+			DELETE FROM [dbo].[BasketballTeams]
+				  WHERE Id = @Id;
+
+END
