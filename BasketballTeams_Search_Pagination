@@ -1,0 +1,62 @@
+ALTER   PROC [dbo].[BasketballTeams_Search_Pagination]
+			@PageIndex int
+           ,@PageSize int
+		   ,@Query nvarchar(100)
+
+
+
+AS
+
+
+/* ---- TEST CODE ----
+		
+	   Declare @PageIndex int = 0
+			, @PageSize int = 10
+			, @Query nvarchar(100) = 'Summer'
+      
+	   Execute dbo.BasketballTeams_Search_Pagination @PageIndex, @PageSize, @Query
+
+	   SELECT * FROM dbo.BasketballTeams 
+
+
+---- END TEST CODE ----
+*/
+
+
+
+BEGIN
+
+			DECLARE @offset int = @PageIndex * @PageSize
+
+			SELECT bt.Id
+					  ,bt.[Name]
+					  ,bt.[Venue]
+					  ,st.Term AS SeasonTerm	
+					  ,c.[Name] AS Coach			  
+					  ,Players = (
+					SELECT p.Id AS id 
+					,p.[Name] AS [Name]
+					FROM [dbo].[Players] AS p inner join [dbo].[PlayerTeams] AS pt
+					ON  pt.PlayerId = p.Id 
+					WHERE pt.TeamId = bt.Id
+					FOR JSON AUTO
+					 )
+					,TotalCount = COUNT(1) OVER()
+
+				  FROM [dbo].[BasketballTeams] AS bt inner join [dbo].[B-SeasonTerm] AS st
+				  ON st.Id = bt.SeasonTermId
+				  inner join dbo.Coaches as c
+				  ON c.Id = bt.CoachId
+
+				   WHERE (bt.[Name] LIKE '%' + @Query + '%' OR
+						  bt.[Venue] LIKE '%' + @Query + '%' OR
+						  c.[Name] LIKE '%' + @Query + '%' OR
+						  st.[Term]  LIKE '%' + @Query + '%'
+		                 )
+				  
+				  ORDER BY c.Id
+				   OFFSET @offset ROWS
+			 FETCH NEXT @PageSize ROWS ONLY
+
+END
+
