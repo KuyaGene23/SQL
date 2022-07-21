@@ -1,0 +1,46 @@
+ALTER   PROC [dbo].[BasketballTeams_Update]
+					@Name nvarchar(100)
+                   ,@Venue nvarchar(100)
+				   ,@SeasonTermId int
+				   ,@CoachId int
+				   ,@id int OUTPUT
+				   
+
+
+AS
+
+/* ---- TEST CODE ----
+						
+				DECLARE @Id int = 11
+						
+				 		 
+			    	DECLARE		 @Name nvarchar(100) = 'Orlando Magic'
+								,@Venue nvarchar(100) = 'Amway Center'
+								,@SeasonTermId int = 3
+								,@CoachId int  = 1
+
+			
+				EXECUTE dbo.BasketballTeams_Update
+								 @Name
+								,@Venue
+								,@SeasonTermId 
+								,@CoachId 
+								,@Id 
+
+		SELECT *
+	    FRom dbo.BasketballTeams
+
+*/ ----- END TEST CODE -----
+
+
+
+BEGIN 
+
+			UPDATE [dbo].[BasketballTeams]
+			   SET [Name] = @Name
+				  ,[Venue] = @Venue
+				  ,[SeasonTermId] = @SeasonTermId
+				  ,[CoachId] = @CoachId
+
+			  WHERE Id = @Id
+END
