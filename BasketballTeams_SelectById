@@ -1,0 +1,45 @@
+CREATE OR ALTER PROC [dbo].[BasketballTeams_SelectById]
+				@Id int
+
+AS
+
+
+/* ------ TEST CODE ------
+
+
+				DECLARE @Id int = 4
+
+				EXECUTE dbo.BasketballTeams_SelectById @Id
+
+				SELECT * 
+				FROM dbo.BasketballTeams
+
+
+*/ ---- END TEST CODE -------
+
+
+
+BEGIN
+
+					SELECT bt.Id
+					  ,bt.[Name]
+					  ,bt.[Venue]
+					  ,st.Term AS SeasonTerm	
+					  ,c.[Name] AS Coach			  
+					  ,Players = (
+					SELECT p.Id AS id 
+					,p.[Name] AS [Name]
+					FROM [dbo].[Players] AS p inner join [dbo].[PlayerTeams] AS pt
+					ON  pt.PlayerId = p.Id 
+					WHERE pt.TeamId = bt.Id
+					FOR JSON AUTO
+					 )
+
+				  FROM [dbo].[BasketballTeams] AS bt inner join [dbo].[B-SeasonTerm] AS st
+				  ON st.Id = bt.SeasonTermId
+				  inner join dbo.Coaches as c
+				  ON c.Id = bt.CoachId
+				  
+				  WHERE bt.Id = @Id
+
+END
